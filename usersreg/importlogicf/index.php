@@ -27,5 +27,5 @@ function get_html($csv_file) {
 }
 
 //test
-echo get_html('C:\\xampp\\htdocs\\usersreg\\importlogicf\\mock_data.csv');
+echo get_html('C:\\xampp\\htdocs\\internship-files\\usersreg\\importlogicf\\mock_data.csv');
 

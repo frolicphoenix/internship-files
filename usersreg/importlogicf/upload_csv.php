@@ -5,6 +5,8 @@
     if(isset($_POST['upload']) && $_POST['upload']=='Upload CSV') {
         $display_table='test';
     }
+
+    // exit();
 ?>
 
 <!DOCTYPE html>
