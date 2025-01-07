@@ -1,0 +1,237 @@
+:root {
+    --blue: #244855;
+    --brown: #874F41;
+    --offwhite: #FBE9D0;
+    --grey: #90AEAD;
+    --red: #E64833;
+    --font: 'Courier New', Courier, monospace;
+}
+
+body {
+    font-family: var(--font);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+}
+.card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    padding: 2rem;
+    text-align: center;
+}
+.card-title {
+    color: #333;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+}
+.card-body {
+    color: #666;
+    margin-bottom: 1.5rem;
+}
+.btn {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    margin: 0.5rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+.btn-login {
+    background-color: #4CAF50;
+    color: white;
+}
+.btn-login:hover {
+    background-color: #45a049;
+}
+.btn-register {
+    background-color: #008CBA;
+    color: white;
+}
+.btn-register:hover {
+    background-color: #007B9A;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.form-group {
+    margin-bottom: 1rem;
+    width: 100%;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+.form-group input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+.btn-submit {
+    background-color: #4CAF50;
+    color: white;
+    width: 100%;
+}
+.btn-submit:hover {
+    background-color: #45a049;
+}
+.login-links {
+    margin-top: 1rem;
+}
+.login-links a {
+    display: block;
+    color: #008CBA;
+    text-decoration: none;
+    margin-top: 0.5rem;
+}
+.login-links a:hover {
+    text-decoration: underline;
+}
+
+.register-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.form-group {
+    margin-bottom: 1rem;
+    width: 100%;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+.form-group input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.register-links {
+    margin-top: 1rem;
+}
+.register-links a {
+    display: block;
+    color: #4CAF50;
+    text-decoration: none;
+    margin-top: 0.5rem;
+}
+.register-links a:hover {
+    text-decoration: underline;
+}
+.forgot-password-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.form-group {
+    margin-bottom: 1rem;
+    width: 100%;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+.form-group input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+.btn-submit {
+    background-color: #FF9800;
+    color: white;
+    width: 100%;
+}
+.btn-submit:hover {
+    background-color: #F57C00;
+}
+.forgot-password-links {
+    margin-top: 1rem;
+}
+.forgot-password-links a {
+    display: block;
+    color: #4CAF50;
+    text-decoration: none;
+    margin-top: 0.5rem;
+}
+.forgot-password-links a:hover {
+    text-decoration: underline;
+}
+
+.reset-password-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.form-group {
+    margin-bottom: 1rem;
+    width: 100%;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+.form-group input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+.btn-submit {
+    background-color: #FF9800;
+    color: white;
+    width: 100%;
+}
+.btn-submit:hover {
+    background-color: #F57C00;
+}
+.reset-password-links {
+    margin-top: 1rem;
+}
+.reset-password-links a {
+    display: block;
+    color: #4CAF50;
+    text-decoration: none;
+    margin-top: 0.5rem;
+}
+.reset-password-links a:hover {
+    text-decoration: underline;
+}
+.message {
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.update-password-links a {
+    display: inline-block;
+    color: #4CAF50;
+    text-decoration: none;
+    margin-top: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: #e7f3e8;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+.update-password-links a:hover {
+    background-color: #d4e9d6;
+}
