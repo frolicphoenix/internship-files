@@ -999,6 +999,8 @@ id,first_name,last_name,email,salary,position,date_started,gender_id,top_size_id
 998,Clemence,Aberhart,caberhartrp@tiny.cc,"$121,784.35",GIS Technical Architect,2013-02-16,1,7
 999,Jilly,Ream,jreamrq@goo.gl,"$126,302.33",Internal Auditor,2017-04-21,1,6
 1000,Benjie,Deshorts,bdeshortsrr@biblegateway.com,"$55,088.75",Account Executive,2018-07-22,3,5
-1001,Ash ,Ketchum,ashketchum@pokemon.com,"$100,000.00",Pokemon Researcher,2023-01-06,2,3
-,Misty,Williams,misty@cerulean.com,"$500,000.00",Gym Leader,1998-01-01,1,6
-,Brock,Williams,misty@cerulean.com,"$500,000.00",Leader,1998-01-01,1,6
+1001,Ash,Deshorts,bdeshortsrr@biblegateway.com,"$55,088.75",Account Executive,2018-07-22,3,5
+1002,Misty,Cerulean,bdeshortsrr@biblegateway.com,"$55,088.75",Account Executive,2018-07-22,3,5
+1004,Brock,Williams,bdeshortsrr@biblegateway.com,"$55,088.75",Account Executive,2018-07-22,3,5
+,pikachu,Cerulean,bdeshortsrr@biblegateway.com,"$55,088.75",Account Executive,2018-07-22,3,5
+,bulbasaur,Williams,bdeshortsrr@biblegateway.com,"$55,088.75",Account Executive,2018-07-22,3,5

@@ -11,7 +11,7 @@
 </head>
 <body>
     <h2>Upload CSV File</h2>
-    <form action="uploadhh.php" method="post" enctype="multipart/form-data">
+    <form action="upload.php" method="post" enctype="multipart/form-data">
         <input type="file" name="csvFile" accept=".csv" required>
         <input type="submit" value="Upload CSV">
     </form>
