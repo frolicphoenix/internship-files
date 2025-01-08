@@ -1,31 +1,19 @@
-<?php 
+<?php
 
-function get_html($csv_file) {
+?>
 
-    $html = '<table>';
-    $file = fopen($csv_file, 'r');
-    $header_arr=fgetcsv($file);
-
-    $html.='<thead>';
-    foreach($header_arr as $k=>$v) {
-        $html.='<th>'.$v.'</th>';
-    }
-    $html.='</thead>';
-
-    $html.='<tbody>';
-        while($line = fgetcsv($file)) {
-            $html.='<tr>';
-            foreach($line as $k=>$v) {
-                $html.='<td>'.$v.'</td>';
-            }
-            $html.='</tr>';
-        }
-    $html.='</tbody>';
-
-    $html.='</table>';
-    return $html;
-}
-
-//test
-echo get_html('C:\\xampp\\htdocs\\internship-files\\usersreg\\importlogicf\\mock_data.csv');
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV Upload</title>
+</head>
+<body>
+    <h2>Upload CSV File</h2>
+    <form action="uploadhh.php" method="post" enctype="multipart/form-data">
+        <input type="file" name="csvFile" accept=".csv" required>
+        <input type="submit" value="Upload CSV">
+    </form>
+</body>
+</html>
