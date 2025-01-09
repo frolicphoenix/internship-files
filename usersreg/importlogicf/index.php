@@ -1,4 +1,14 @@
 <?php
+
+session_start();
+require_once __DIR__ . '/../db_connect.php';
+
+// Check if user is logged in and is a superadmin
+if (!isset($_SESSION['user_id']) || $_SESSION['admin_type_id'] != 1) {
+    header("Location: ../loginform/login.php");
+    exit();
+}
+
 $uploadDir = "uploads/";
 $downloadDir = "downloads/";
 

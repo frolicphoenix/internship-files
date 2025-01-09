@@ -23,8 +23,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else if($user['admin_type_id'] == 2 || $user['admin_type_id'] == 3 || $user['admin_type_id'] == 4  || $user['admin_type_id'] == 5) {
             header("Location: table.php");
 
+        } else if ($user['admin_type_id'] == 8 || $user['admin_type_id'] == 1){
+           header("Location: ..\importlogicf\index.php");
+
         } else {
-           header("Location: welcome.php");
+            header("Location: welcome.php");
         }
         exit();
     
