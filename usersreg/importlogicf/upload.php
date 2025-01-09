@@ -15,6 +15,7 @@ if (!file_exists($uploadDir)) {
 // checks if the form was submitted via POST method and if a file named "csvFile" was uploaded
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["csvFile"])) {
 
+    date_default_timezone_set('EST');
     // generates a unique filename to prevent from overwriting the file names (existing)
     $file = $_FILES["csvFile"];
     

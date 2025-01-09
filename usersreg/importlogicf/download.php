@@ -23,7 +23,7 @@ try {
 
     // openning output stream and saving to downloads/
     $filelocation = 'downloads/';
-    $filename = 'export-' .date('Y-m-d H.i.s').'.csv';
+    $filename = 'export-' .date('H.i.s').'.csv';
     $file_export = $filelocation . $filename;
 
     $output = fopen($file_export, 'w');
