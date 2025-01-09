@@ -1000,5 +1000,5 @@ id,first_name,last_name,email,salary,position,date_started,gender_id,top_size_id
 999,Jilly,Ream,jreamrq@goo.gl,"$126,302.33",Internal Auditor,2017-04-21,1,6
 1000,Benjie,Deshorts,bdeshortsrr@biblegateway.com,"$55,088.75",Account Executive,2018-07-22,3,5
 1001,Ash,Ketchum,ash@pokemonmaster.com,"$100,000.00",Pokemon Master,2023-07-22,3,5
-1028,Misty,Cerulean,misty@ceruleangym.com,"$55,088.75",Account Executive,2018-07-22,3,5
+1028,Misty,Cerulean,misty@pokemongym.com,"$55,088.75",Account Executive,2018-07-22,3,5
 ,Brock,Pewter,brock@pewtergym.com,"$55,088.75",Gym Leader,1998-07-22,1,3

@@ -4,36 +4,73 @@ $username = "root";
 $password = "";
 $dbname = "usersreg";
 
+
+// defines the uploads directory
+$uploadDir = "uploads/";
+
+// creates the upload directory if it doesn't exist ensuring there is somewhere the csv files gets uploaded
+if (!file_exists($uploadDir)) {
+    mkdir($uploadDir, 0777, true);
+}
+
+// checks if the form was submitted via POST method and if a file named "csvFile" was uploaded
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["csvFile"])) {
-    $file = $_FILES["csvFile"]["tmp_name"];
+
+    // generates a unique filename to prevent from overwriting the file names (existing)
+    $file = $_FILES["csvFile"];
     
-    if (($handle = fopen($file, "r")) !== FALSE) {
-        try {
-            $pdo = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $filename = uniqid() . "_" . $file["name"];
+    $uploadPath = $uploadDir . $filename;
 
-            // Skip the header row
-            fgetcsv($handle);
 
-            $pdo->beginTransaction();
+    // this moves the uploaded file to the uploads directory
+    if (move_uploaded_file($file["tmp_name"], $uploadPath)) {
+        echo "File uploaded successfully. ";
 
-            // Read the CSV data and insert into the database
-            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-                $id = $data[0]; // Get the id from the first column
+        // opening the uploaded file for reading "r"
+        if (($handle = fopen($uploadPath, "r")) !== FALSE) {
+            try {
 
-                // Check if the record already exists
-                $checkSql = "SELECT id FROM mock_data WHERE id = :id";
-                $checkStmt = $pdo->prepare($checkSql);
-                $checkStmt->bindParam(':id', $id, PDO::PARAM_INT);
-                $checkStmt->execute();
+                $pdo = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+                $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-                if ($checkStmt->rowCount() == 0) {
-                    // Insert new record
-                    $sql = "INSERT INTO mock_data (id, first_name, last_name, email, salary, position, date_started, gender_id, top_size_id) 
-                            VALUES (:id, :first_name, :last_name, :email, :salary, :position, :date_started, :gender_id, :top_size_id)";
-                    
-                    $stmt = $pdo->prepare($sql);
-                    $stmt->bindParam(':id', $data[0], PDO::PARAM_INT);
+                // skips the header row of csv file
+                fgetcsv($handle);
+
+                $pdo->beginTransaction();
+
+                // loops through each row of the CSV file
+                // reading the CSV data and insert or update the database
+                while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+
+                    // if the condition (!empty($data)) is true, it assigns $data to $id
+                    // if the condition is false, it assigns null to $id
+                    $id = !empty($data[0]) ? $data[0] : null;
+
+                    if ($id !== null) {
+                        // update existing record
+                        $sql = "UPDATE mock_data SET 
+                                first_name = :first_name, 
+                                last_name = :last_name, 
+                                email = :email, 
+                                salary = :salary, 
+                                position = :position, 
+                                date_started = :date_started, 
+                                gender_id = :gender_id, 
+                                top_size_id = :top_size_id 
+                                WHERE id = :id";
+                        
+                        $stmt = $pdo->prepare($sql);
+                        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+                    } else {
+                        // insert new record
+                        $sql = "INSERT INTO mock_data (first_name, last_name, email, salary, position, date_started, gender_id, top_size_id) 
+                                VALUES (:first_name, :last_name, :email, :salary, :position, :date_started, :gender_id, :top_size_id)";
+                        
+                        $stmt = $pdo->prepare($sql);
+                    }
+
+                    // bind the CSV data to the SQL parameters for both update and insert
                     $stmt->bindParam(':first_name', $data[1], PDO::PARAM_STR);
                     $stmt->bindParam(':last_name', $data[2], PDO::PARAM_STR);
                     $stmt->bindParam(':email', $data[3], PDO::PARAM_STR);
@@ -43,27 +80,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["csvFile"])) {
                     $stmt->bindParam(':gender_id', $data[7], PDO::PARAM_INT);
                     $stmt->bindParam(':top_size_id', $data[8], PDO::PARAM_INT);
                     
+                    // executing and providing feedback
+                    // . for updates and new id for inserts
                     if ($stmt->execute()) {
-                        echo "New record inserted successfully (ID: $id)";
+                        echo $id !== null ? "." : ". " . $pdo->lastInsertId();
                     } else {
                         echo "Error: " . $sql;
                     }
-                } else {
-                    echo ".";
                 }
-            }
 
-            $pdo->commit();
-            fclose($handle);
-            echo "CSV data has been successfully imported into the database.";
-        } catch (PDOException $e) {
-            if (isset($pdo)) {
-                $pdo->rollBack();
+                $pdo->commit();
+                fclose($handle);
+
+                echo "CSV data has been successfully imported into the database.";
+
+            } catch (PDOException $e) {
+                if (isset($pdo)) {
+                    $pdo->rollBack();
+                }
+                echo "Error: " . $e->getMessage();
             }
-            echo "Error: " . $e->getMessage();
+        } else {
+            echo "Unable to open the CSV file.";
         }
     } else {
-        echo "Unable to open the CSV file.";
+        echo "Error moving uploaded file.";
     }
 } else {
     echo "No file was uploaded or an error occurred during upload.";
