@@ -1,15 +1,45 @@
+
 <?php
 
-session_start();
-require_once __DIR__ . '/../db_connect.php';
+$host = 'localhost';
+$dbname = 'usersreg';
+$username = 'root';
+$password = '';
 
-$downloadDir = "downloads/";
+try {
+    
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-if(!file_exists($downloadDir)) {
-    mkdir($downloadDir, 0777, true);
+    // fetching data from database
+    $stmt = $pdo->query("SELECT * FROM mock_data");
+    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    //setting headers for file download
+    // header('Content-Type: text/csv');
+    // header('Content-Disposition: attachment; filename="database_export.csv"');
+
+    date_default_timezone_set('EST');
+    
+    // openning output stream and saving to downloads/
+    $filelocation = 'downloads/';
+    $filename = 'export-' .date('Y-m-d H.i.s').'.csv';
+    $file_export = $filelocation . $filename;
+
+    $output = fopen($file_export, 'w');
+
+    // writing csv headers
+    fputcsv($output, array_keys($data[0]));
+
+    // write data rows
+    foreach ($data as $row) {
+        fputcsv($output, $row);
+    }
+
+    // close the output stream
+    fclose($output);
+    echo "Database downloaded.";
+
+} catch(PDOException $e) {
+    echo "Error: " . $e->getMessage();
 }
-
-if (isset($_SERVER['REMOTE_ADDR'])) {
-    die(':)');
-}
-echo "running.";
