@@ -20,7 +20,7 @@ try {
     // header('Content-Disposition: attachment; filename="database_export.csv"');
 
     date_default_timezone_set('EST');
-    
+
     // openning output stream and saving to downloads/
     $filelocation = 'downloads/';
     $filename = 'export-' .date('Y-m-d H.i.s').'.csv';
