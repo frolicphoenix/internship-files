@@ -1,8 +1,7 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "usersreg";
+
+session_start();
+require_once __DIR__ . '/../db_connect.php';
 
 
 // defines the uploads directory
@@ -30,9 +29,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["csvFile"])) {
         // opening the uploaded file for reading "r"
         if (($handle = fopen($uploadPath, "r")) !== FALSE) {
             try {
-
-                $pdo = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-                $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
                 // skips the header row of csv file
                 fgetcsv($handle);
