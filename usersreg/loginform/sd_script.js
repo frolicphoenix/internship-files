@@ -8,6 +8,7 @@ $(document).ready(function() {
         }
     });
 
+    // initialize DataTbale on the table with ID 'mockTable
     $('#mockTable').DataTable({
         "ajax": {
             "url": "get_data.php",
@@ -22,18 +23,22 @@ $(document).ready(function() {
             { "data": "position" },
             { "data": "top_size" },
             { "data": "date_started" },
-            { "data": "actions", "orderable": false }
+            { "data": "actions", "orderable": false } // orderable=flase means non-sortable
         ],
         "order": [[0, "desc"]],
         "pageLength": 50
     });
 
+    // event listener for update button
     $('#mockTable').on('click', '.update-btn', function() {
+        //get the id from button click
         var id = $(this).data('id');
+        //find the closest table row that has this button
         var row = $(this).closest('tr');
+        //get the data for that row from DataTable
         var data = $('#mockTable').DataTable().row(row).data();
 
-        // Populate modal with data
+        //populating modal with data
         $('#updateId').val(id);
         $('#updateFirstName').val(data.first_name);
         $('#updateLastName').val(data.last_name);
@@ -48,6 +53,34 @@ $(document).ready(function() {
         $('#updateModal').show();
     });
 
+    //event listener for delete button
+    $('#mockTable').on('click', '.delete-btn', function() {
+
+        var id = $(this).data('id');
+
+        if (confirm('Are you sure you want to delete this record?')) {
+            
+            $.ajax({
+                url: 'delete_data.php',
+                method: 'POST',
+                data: { id: id },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        alert('Record deleted successfully!');
+                        $('#mockTable').DataTable().ajax.reload();
+                    } else {
+                        alert('Failed to delete record: ' + response.error);
+                    }
+                },
+                error: function() {
+                    alert('An error occurred while deleting the record.');
+                }
+            });
+        }
+    });
+
+
     $('.close').click(function() {
         $('#updateModal').hide();
     });
@@ -60,35 +93,36 @@ $(document).ready(function() {
     });
 
     // Handle form submission
-    // $('#updateForm').submit(function(e) {
-    //     e.preventDefault();
+    $('#updateForm').submit(function(e) {
+        e.preventDefault();
     
-    //     var formData = $(this).serialize();
-    
-    //     $.ajax({
-    //         url: 'update_data.php',
-    //         method: 'POST',
-    //         data: formData,
-    //         dataType: 'json',
-    //         success: function(response) {
-    //             if (response.success) {
-    //                 alert('Data updated successfully!');
-    //                 $('#updateModal').hide();
-    //                 $('#mockTable').DataTable().ajax.reload();
-    //             } else {
-    //                 alert('Failed to update data: ' + response.error);
-    //             }
-    //         },
-    //         error: function() {
-    //             alert('An error occurred while updating the data.');
-    //         }
-    //     });
-    // });
+        var formData = $(this).serialize();
+
+        // send an AJAX request to update the data
+        $.ajax({
+            url: 'update_data.php',
+            method: 'POST',
+            data: formData,
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    alert('Data updated successfully!');
+                    $('#updateModal').hide();
+                    $('#mockTable').DataTable().ajax.reload();
+                } else {
+                    alert('Failed to update data: ' + response.error);
+                }
+            },
+            error: function() {
+                alert('An error occurred while updating the data.');
+            }
+        });
+    });
     
 
     $('#updateForm').submit(function(e) {
         e.preventDefault();
-        // Here you would typically send an AJAX request to update the data
+        
         console.log('Form submitted with data:', $(this).serialize());
         $('#updateModal').hide();
     });

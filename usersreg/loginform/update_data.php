@@ -8,6 +8,8 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['admin_type_id'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    //retriving data from POST request
     $id = $_POST['id'];
     $first_name = $_POST['first_name'];
     $last_name = $_POST['last_name'];
@@ -30,6 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare($query);
         $stmt->execute([$first_name, $last_name, $email, $gender, $salary, $position, $top_size, $date_started, $id]);
 
+        //check if any rows were affected by the update query
         if ($stmt->rowCount() > 0) {
             echo json_encode(['success' => true]);
         } else {
