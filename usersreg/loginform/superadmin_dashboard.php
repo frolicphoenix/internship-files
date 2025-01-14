@@ -76,7 +76,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             <h1>Welcome, Superadmin!</h1>
             <nav>
                 <a href="logout.php" class="btn">Logout</a>
-                <a href="superadmin_table.html" class="btn">Table</a>
+                <a href="superadmin_table.php" class="btn">Table</a>
                 <a href="superadmin_roles.php" class="btn">Set Roles</a>
                 <a href="../importlogicf/index.php" class="btn">Database download</a>
             </nav>

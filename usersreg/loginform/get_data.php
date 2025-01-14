@@ -48,5 +48,10 @@ $stmt = $pdo->prepare($query);
 $stmt->execute();
 $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+// Add the update button to each row of data
+foreach ($data as &$row) {
+    $row['actions'] = '<button class="update-btn" data-id="' . $row['id'] . '">Update</button>';
+}
+
 echo json_encode($data);
 ?>
