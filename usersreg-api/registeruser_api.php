@@ -13,8 +13,8 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && $_GET['action'] === 'register') {
     $salary = $_POST['salary'] ?? null;
     $position = $_POST['position'] ?? null;
     $date_started = $_POST['date_started'] ?? null;
-    $gender_id = $_POST['gender_id'] ?? null;
-    $top_size_id = $_POST['top_size_id'] ?? null;
+    // $gender_id = $_POST['gender_id'];
+    // $top_size_id = $_POST['top_size_id'];
 
     // validate required fields
     if (!$first_name || !$last_name || !$email) {
@@ -27,8 +27,8 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && $_GET['action'] === 'register') {
         $pdo->beginTransaction();
 
         // inserting into mock_data table
-        $stmt = $pdo->prepare("INSERT INTO mock_data (first_name, last_name, email, salary, position, date_started, gender_id, top_size_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$first_name, $last_name, $email, $salary, $position, $date_started, $gender_id, $top_size_id]);
+        $stmt = $pdo->prepare("INSERT INTO mock_data (first_name, last_name, email, salary, position, date_started) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$first_name, $last_name, $email, $salary, $position, $date_started]);
         $userId = $pdo->lastInsertId();
 
         // generate unique key
@@ -42,9 +42,9 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && $_GET['action'] === 'register') {
 
         echo json_encode(["message"=> "User registered successfully", "id" => $userId, "unique_key" => $uniqueKey]);
 
-     } catch (Exception $e) {
+    } catch (Exception $e) {
         $pdo->rollBack();
         echo json_encode(["error"=> $e->getMessage()]);
-      }
+    }
     
 }
