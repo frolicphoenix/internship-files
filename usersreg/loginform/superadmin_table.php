@@ -95,6 +95,7 @@ $topSizes = $topSizeStmt->fetchAll(PDO::FETCH_COLUMN);
         <table id="mockTable" class="display">
             <thead>
                 <tr>
+                    <!-- <th>id</th> -->
                     <th>First Name</th>
                     <th>Last Name</th>
                     <th>Email</th>
