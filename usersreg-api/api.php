@@ -14,7 +14,7 @@ try {
 }
 
 
-
+// READ
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && $_GET['action'] === 'read') {
     
     $user_id = $_GET['id'];
@@ -34,11 +34,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && $_GET['action'] === 'read') {
         }
     } else {
         //fetch all users 
-        echo json_encode(["error"=> "No user id found."]);
+        $stmt = $pdo->prepare("SELECT m.*, g.gender_type, t.size 
+                   FROM mock_data m 
+                   LEFT JOIN gender g ON m.gender_id = g.id 
+                   LEFT JOIN top_size t ON m.top_size_id = t.id");
+        $stmt->execute();
+        $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (empty($users)) {
+            echo json_encode(["message" => "No users found."]);
+        } else {
+            echo json_encode($users);
+        }
 
     }
 }
 
+
+//CREATE
 if($_SERVER['REQUEST_METHOD'] === 'POST' && $_GET['action'] === 'register') {
 
     $first_name = $_POST['first_name'];
@@ -85,6 +98,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && $_GET['action'] === 'register') {
     
 }
 
+//UPDATE
 if($_SERVER['REQUEST_METHOD'] === 'PUT' && $_GET['action'] === 'update') {
     $uniqueKey = $_GET['key'];
 
@@ -135,6 +149,7 @@ if($_SERVER['REQUEST_METHOD'] === 'PUT' && $_GET['action'] === 'update') {
     }
 }
 
+//DELETE
 if ($_SERVER['REQUEST_METHOD'] === 'DELETE' && $_GET['action'] === 'delete') {
     // $userId = $_GET['id'];
     $uniqueKey = $_GET['key'];
