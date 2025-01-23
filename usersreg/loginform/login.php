@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header("Location: table.php");
 
         } else if ($user['admin_type_id'] == 8 || $user['admin_type_id'] == 1){
-           header("Location: ..\importlogicf\index.php");
+           header("Location: ../importlogicf/index.php");
 
         } else {
             header("Location: welcome.php");
@@ -37,30 +37,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 ?>
 
-<!-- <form method="post">
-    Username: <input type="text" name="username" required><br>
-    Password: <input type="password" name="password" required><br>
-    <input type="submit" value="Login">
-</form>
-<a href="forgot_password.php" style="color: black; font-size: 24px;">Forgot Password?</a><br>
-<a href="http://localhost/usersreg/loginform/register.php" style="color: black; font-size: 24px;">CLICK HERE TO REGISTER</a><BR>
-
--->
-
 <link rel='stylesheet' href="formstyles.css"> 
 
 <body>
-    <!-- <div class="btn-container">
-        <div>
-            <form method="post">
-                Username <input type="text" name="username" required><br>
-                Password <input type="password" name="password" required><br>
-                <input type="submit" value="Login" class="btn">
-            </form>
-            <a href="forgot_password.php" class="login">Forgot Password?</a><br>
-            <a href="http://localhost/usersreg/loginform/register.php" class="login">CLICK HERE TO REGISTER</a>
-        </div>
-    </div> -->
+
     <div class="card">
         <h2 class="card-title">Login</h2>
         <form method="post" class="login-form">

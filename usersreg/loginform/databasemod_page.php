@@ -23,6 +23,8 @@ if (!isset($_SESSION['user_id'])) {
         </header>
         <main>
             <p>You have a db moderator account.</p>
+
+            <a href="../importlogicf/index.php" class="btn">Database download</a>
         </main>
         <footer>
             <a href="logout.php" class="btn">Logout</a>
