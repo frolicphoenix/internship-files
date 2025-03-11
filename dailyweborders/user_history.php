@@ -1,97 +1,78 @@
 <?php
-include 'db_connect.php';
+// Assuming you have a database connection established in a separate file (e.g., db_connect.php)
+require_once 'db_connect.php'; // Adjust path as needed
 include 'functions.php';
 
-// Get the email from the query string
-$email = isset($_GET['email']) ? $_GET['email'] : null;
+// Get the email from the GET request (or however you're passing it)
+$email = $_GET['email'] ?? ''; // Use a default if email is not provided
 
-if (!$email) {
-    echo "No email provided.";
-    die();
-}
-
-// Get sort column and sort order
 $sortColumn = getSortColumn();
 $sortOrder = getSortOrder();
 
-// Fetch signup history from chargedbackcards_log
-$signupQuery = "
-    SELECT 
-        name,
-        soldby AS order_by,
-        DATE_FORMAT(date_added, '%Y-%m-%d %H:%i:%s') AS OrderDateFM
-    FROM dailyweborders.chargedbackcards_log
-    WHERE email = ?
-    ORDER BY $sortColumn $sortOrder;
-";
+// *** Signups Query ***
+$signupQuery = "SELECT Name, Email, 
+            CASE 
+            WHEN STR_TO_DATE(OrderDate, '%Y%m%d') IS NOT NULL THEN STR_TO_DATE(OrderDate, '%Y%m%d')
+            WHEN STR_TO_DATE(OrderDate, '%m/%d/%Y') IS NOT NULL THEN STR_TO_DATE(OrderDate, '%m/%d/%Y')
+            ELSE NULL
+        END AS OrderDateFM, 
+SoldBy FROM dailyweborders WHERE Email = ? LIMIT 10";
 $signupStmt = $pdo->prepare($signupQuery);
 $signupStmt->execute([$email]);
 $signups = $signupStmt->fetchAll();
 
-// Fetch completed orders from multiple tables (dailyweborders, orderscaptured, order_limbo)
+// Fetch completed orders
 $completedOrdersQuery = "
     SELECT 
-        'dailyweborders' AS source_table,
-        Name,
-        Price AS order_amount,
-        SoldBy AS order_by,
+        Name, 
+        Email,
+        Price AS order_amount, 
+        SoldBy, 
         CASE 
-            WHEN STR_TO_DATE(OrderDate, '%Y%m%d') IS NOT NULL THEN DATE_FORMAT(STR_TO_DATE(OrderDate, '%Y%m%d'), '%Y-%m-%d')
-            WHEN STR_TO_DATE(OrderDate, '%m/%d/%Y') IS NOT NULL THEN DATE_FORMAT(STR_TO_DATE(OrderDate, '%m/%d/%Y'), '%Y-%m-%d')
+            WHEN STR_TO_DATE(OrderDate, '%Y%m%d') IS NOT NULL THEN STR_TO_DATE(OrderDate, '%Y%m%d')
+            WHEN STR_TO_DATE(OrderDate, '%m/%d/%Y') IS NOT NULL THEN STR_TO_DATE(OrderDate, '%m/%d/%Y')
             ELSE NULL
-        END AS OrderDateFM
-    FROM dailyweborders
-    WHERE Email = ?
+        END AS OrderDateFM,
+        Country,
+        Address,
+        City,
+        ProvinceState,
+        PostalZipCode,
+        Phone,
+        Tracking_Number
+    FROM 
+        dailyweborders
+    WHERE 
+        Email = ?
+        AND Name != '' AND Name IS NOT NULL
+        AND Country != '' AND Country IS NOT NULL
+        AND Address != '' AND Address IS NOT NULL
+        AND City != '' AND City IS NOT NULL
+        AND ProvinceState != '' AND ProvinceState IS NOT NULL
+        AND PostalZipCode != '' AND PostalZipCode IS NOT NULL
+        AND Price != '' AND Price IS NOT NULL
+        AND OrderDate != '' AND OrderDate IS NOT NULL";
 
-    UNION ALL
-
-    SELECT 
-        'orderscaptured' AS source_table,
-        Name,
-        Price AS order_amount,
-        SoldBy AS order_by,
-        CASE 
-            WHEN STR_TO_DATE(OrderDate, '%Y%m%d') IS NOT NULL THEN DATE_FORMAT(STR_TO_DATE(OrderDate, '%Y%m%d'), '%Y-%m-%d')
-            WHEN STR_TO_DATE(OrderDate, '%m/%d/%Y') IS NOT NULL THEN DATE_FORMAT(STR_TO_DATE(OrderDate, '%m/%d/%Y'), '%Y-%m-%d')
-            ELSE NULL
-        END AS OrderDateFM
-    FROM orderscaptured
-    WHERE Email = ?
-
-    UNION ALL
-
-    SELECT 
-        'order_limbo' AS source_table,
-        Name,
-        Price AS order_amount,
-        SoldBy AS order_by,
-        CASE 
-            WHEN STR_TO_DATE(OrderDate, '%Y%m%d') IS NOT NULL THEN DATE_FORMAT(STR_TO_DATE(OrderDate, '%Y%m%d'), '%Y-%m-%d')
-            WHEN STR_TO_DATE(OrderDate, '%m/%d/%Y') IS NOT NULL THEN DATE_FORMAT(STR_TO_DATE(OrderDate, '%m/%d/%Y'), '%Y-%m-%d')
-            ELSE NULL
-        END AS OrderDateFM
-    FROM order_limbo
-    WHERE Email = ?
-";
 $completedOrdersStmt = $pdo->prepare($completedOrdersQuery);
-$completedOrdersStmt->execute([$email, $email, $email]); // Pass the email three times for UNION query
+$completedOrdersStmt->execute([$email]);
 $completedOrders = $completedOrdersStmt->fetchAll();
-
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User History</title>
+    <link rel="stylesheet" href="dashboard.css">
     <style>
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-bottom: 20px;
         }
         th, td {
-            border: 1px solid #ccc;
+            border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
         }
@@ -101,68 +82,104 @@ $completedOrders = $completedOrdersStmt->fetchAll();
     </style>
 </head>
 <body>
-    <h1>History of <?php echo htmlspecialchars($email); ?></h1>
 
-    <!-- Signup History Table -->
-    <h2>Signup History</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Order By</th>
-                <th>Order Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if (count($signups) > 0): ?>
-                <?php foreach ($signups as $signup): ?>
+<div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Admin Panel</h2>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="index.php">Dashboard</a></li>
+                <li><a href="#">Orders</a></li>
+                <li><a href="signup_list.php">Customers</a></li>
+                <li><a href="#">Reports</a></li>
+                <li><a href="#">Settings</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h2>Signup History</h2>
+            <table>
+                <thead>
                     <tr>
-                        <td><?php echo htmlspecialchars($signup['name']); ?></td>
-                        <td><?php echo htmlspecialchars($signup['order_by']); ?></td>
-                        <td><?php echo htmlspecialchars($signup['OrderDateFM']); ?></td>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Order Date</th>
+                        <th>Sold By</th>
                     </tr>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <tr>
-                    <td colspan="3">No signups found for this email.</td>
-                </tr>
-            <?php endif; ?>
-        </tbody>
-    </table>
+                </thead>
+                <tbody>
+                    <?php if (count($signups) > 0): ?>
+                        <?php foreach ($signups as $signup): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($signup['Name']); ?></td>
+                                <td><?php echo htmlspecialchars($signup['Email']); ?></td>
+                                <td><?php echo htmlspecialchars($signup['OrderDateFM']); ?></td>
+                                <td><?php echo htmlspecialchars($signup['SoldBy']); ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="4">No signups found for this email.</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
 
-    <!-- Completed Orders Table -->
-    <h2>Completed Orders</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Source Table</th>
-                <th>Name</th>
-                <th>Order Amount</th>
-                <th>Order By</th>
-                <th>Order Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if (count($completedOrders) > 0): ?>
-                <?php foreach ($completedOrders as $order): ?>
+            <h2>Completed Orders</h2>
+            <table>
+                <thead>
+                    <!--  
+                    Country,
+                    Address,
+                    City,
+                    ProvinceState,
+                    PostalZipCode,
+                    Phone, -->
                     <tr>
-                        <td><?php echo htmlspecialchars($order['source_table']); ?></td>
-                        <td><?php echo htmlspecialchars($order['Name']); ?></td>
-                        <td><?php echo htmlspecialchars($order['order_amount']); ?></td>
-                        <td><?php echo htmlspecialchars($order['order_by']); ?></td>
-                        <td><?php echo htmlspecialchars($order['OrderDateFM']); ?></td>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Order Amount</th>
+                        <th>SoldBy</th>
+                        <th>Order Date</th>
+                        <th>Country</th>
+                        <th>Address</th>
+                        <th>City</th>
+                        <th>Province/State</th>
+                        <th>Postal Code</th>
+                        <th>Phone</th>
+                        <th>Tracking Number</th>
                     </tr>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <tr>
-                    <td colspan="5">No completed orders found for this email.</td>
-                </tr>
-            <?php endif; ?>
-        </tbody>
-    </table>
-
-    <!-- Back Link -->
-    <a href="signup_list.php">Back to Sign-up List</a>
+                </thead>
+                <tbody>
+                    <?php if (count($completedOrders) > 0): ?>
+                        <?php foreach ($completedOrders as $order): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($order['Name']); ?></td>
+                                <td><?php echo htmlspecialchars($order['Email']); ?></td>
+                                <td><?php echo htmlspecialchars($order['order_amount']); ?></td>
+                                <td><?php echo htmlspecialchars($order['SoldBy']); ?></td>
+                                <td><?php echo htmlspecialchars($order['OrderDateFM']); ?></td>
+                                <td><?php echo htmlspecialchars($order['Country']); ?></td>
+                                <td><?php echo htmlspecialchars($order['Address']); ?></td>
+                                <td><?php echo htmlspecialchars($order['City']); ?></td>
+                                <td><?php echo htmlspecialchars($order['ProvinceState']); ?></td>
+                                <td><?php echo htmlspecialchars($order['PostalZipCode']); ?></td>
+                                <td><?php echo htmlspecialchars($order['Phone']); ?></td>
+                                <td><?php echo htmlspecialchars($order['Tracking_Number']); ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="4">No completed orders found for this email.</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </main>
+    </div>
 
 </body>
 </html>

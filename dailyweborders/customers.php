@@ -36,9 +36,9 @@ $totalSignups = $stmt->fetchColumn();
                 <h2>Admin Panel</h2>
             </div>
             <ul class="sidebar-menu">
-                <li><a href="#">Dashboard</a></li>
+                <li><a href="">Dashboard</a></li>
                 <li><a href="#">Orders</a></li>
-                <li><a href="signup_list.php">Customers</a></li>
+                <li><a href="#">Customers</a></li>
                 <li><a href="#">Reports</a></li>
                 <li><a href="#">Settings</a></li>
             </ul>
@@ -48,37 +48,13 @@ $totalSignups = $stmt->fetchColumn();
         <main class="main-content">
             <!-- Header -->
             <header class="dashboard-header">
-                <h1>Welcome to the Dashboard</h1>
+                <h1>Customers</h1>
+                <form action="signup_list.php" method="GET" class="search-form">
+                    <input type="text" name="search" placeholder="Search Email" value="<?php echo htmlspecialchars($searchTerm); ?>">
+                    <button type="submit">Search</button>
+                </form>
             </header>
 
-            <!-- Summary Cards -->
-            <section class="summary-cards">
-                <div class="card">
-                    <h3>Total Signups</h3>
-                    <p><?php echo $totalSignups; ?></p>
-                </div>
-                <!-- <div class="card">
-                    <h3>Total Revenue</h3>
-                    <p></p> 
-                </div>
-                <div class="card">
-                    <h3>Total Orders</h3>
-                    <p>279</p> 
-                </div>
-                <div class="card">
-                    <h3>Total Customers</h3>
-                    <p>65</p> 
-                </div> -->
-            </section>
-<!-- 
-            <section class="orders-summary">
-                <h2>Orders Summary</h2>
-
-            </section>
-
-            <section class="revenue-section">
-                <h2>Revenue Overview</h2>
-            </section> -->
         </main>
     </div>
 </body>
