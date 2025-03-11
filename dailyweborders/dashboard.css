@@ -1,0 +1,161 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7fc;
+    color: #333;
+}
+
+.dashboard-container {
+    display: flex;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    background-color: #1e293b;
+    color: #fff;
+    height: 100vh;
+    position: fixed;
+}
+
+.sidebar-header {
+    text-align: center;
+    padding: 20px 0;
+    border-bottom: 1px solid #394867;
+}
+
+.sidebar-header h2 {
+    margin: 0;
+}
+
+.sidebar-menu {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar-menu li {
+    padding: 15px 20px;
+}
+
+.sidebar-menu li a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.sidebar-menu li a:hover {
+    background-color: #394867;
+}
+
+/* Main Content */
+.main-content {
+    margin-left: 250px; /* Matches sidebar width */
+    padding: 20px;
+}
+
+/* Header */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Search Form */
+.search-form {
+    display: flex;
+    gap: 10px;
+}
+
+.search-form input[type="text"],
+.search-form input[type="date"] {
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.search-form button {
+    padding: 10px 20px;
+    border-radius: 4px;
+    border: none;
+    background-color: #007bff;
+    color: #fff;
+}
+
+.search-form button:hover {
+    background-color: #0056b3;
+}
+
+.dashboard-header h1 {
+    font-size: 24px;
+}
+
+/* Search Form */
+.search-form input[type="text"] {
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    margin-left: 30px;
+}
+
+.search-form button {
+    padding: 10px 20px;
+    border-radius: 4px;
+    border: none;
+    background-color: #007bff;
+    color: #fff;
+}
+
+.search-form button:hover {
+    background-color: #0056b3;
+}
+
+/* Summary Cards */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px; /* Space between cards */
+}
+
+.card {
+    background-color: #fff;
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    padding: 20px; /* Inner spacing */
+}
+
+.card h3 {
+    font-size: 18px; /* Title size */
+}
+
+.card p {
+    font-size: 24px; /* Metric size */
+}
+
+/* Orders Summary Section */
+.orders-summary,
+.revenue-section {
+    margin-top: 40px; /* Space between sections */
+}
+
+.orders-summary h2,
+.revenue-section h2 {
+    font-size: 22px; /* Section title size */
+}
+
+/* Revenue Section (Placeholder for Charts) */
+.revenue-section .chart-placeholder {
+    height: 300px; /* Placeholder height for charts */
+    background-color: #e9ecef; /* Light gray background for placeholder */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 200px; /* Adjust for smaller screens */
+        font-size: 14px; /* Reduce font size for sidebar links */
+        position: fixed; /* Keep sidebar fixed on smaller screens */
+        z-index: 1000; /* Ensure sidebar stays on top of content */
+        overflow-y: auto; /* Add scrolling for long menus */
+}
+}
