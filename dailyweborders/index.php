@@ -73,7 +73,6 @@ $totalSignups = $stmt->fetchColumn();
 <!-- 
             <section class="orders-summary">
                 <h2>Orders Summary</h2>
-
             </section>
 
             <section class="revenue-section">
