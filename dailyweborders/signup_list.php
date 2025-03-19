@@ -2,10 +2,9 @@
 include 'db_connect.php';
 include 'functions.php';
 
-// Get search term, start date, and end date
 $searchTerm = getSearchTerm();
-$startDate = isset($_GET['start_date']) ? $_GET['start_date'] : '';
-$endDate = isset($_GET['end_date']) ? $_GET['end_date'] : '';
+$startDate = getStartDate();
+$endDate = getEndDate();
 
 // Pagination variables
 $limit = 40;
@@ -16,24 +15,17 @@ $offset = ($page - 1) * $limit;
 $sortColumn = getSortColumn();
 $sortOrder = getSortOrder();
 
-// Base SQL query
 $sql = "
     SELECT 
         Email, 
         SoldBy,
         Name,
-        CASE 
-            WHEN STR_TO_DATE(OrderDate, '%Y%m%d') IS NOT NULL THEN STR_TO_DATE(OrderDate, '%Y%m%d')
-            WHEN STR_TO_DATE(OrderDate, '%m/%d/%Y') IS NOT NULL THEN STR_TO_DATE(OrderDate, '%m/%d/%Y')
-            ELSE NULL
-        END AS OrderDateFM
+        OrderDate AS OrderDateRaw
     FROM dailyweborders
     WHERE 1=1
 ";
-
-// conditions for search term, date range, and name filtering
 if (!empty($searchTerm)) {
-    $sql .= " AND (Email LIKE :search OR Name LIKE :search)";
+    $sql .= " AND (Email LIKE :search OR Name LIKE :search OR SoldBy LIKE :search)";
 }
 if (!empty($startDate)) {
     $sql .= " AND (
@@ -51,8 +43,6 @@ if (!empty($endDate)) {
             ELSE NULL
         END <= :end_date)";
 }
-
-// sorting and pagination
 $sql .= " ORDER BY 
     CASE 
         WHEN STR_TO_DATE(OrderDate, '%Y%m%d') IS NOT NULL THEN STR_TO_DATE(OrderDate, '%Y%m%d')
@@ -79,7 +69,6 @@ $stmt->execute();
 
 $signups = $stmt->fetchAll();
 ?>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -123,10 +112,9 @@ $signups = $stmt->fetchAll();
             <!-- Header -->
             <header class="dashboard-header">
                 <h1>Sign-up List</h1>
-
                 <!-- Search Form -->
                 <form action="signup_list.php" method="GET" class="search-form">
-                    <input type="text" name="search" placeholder="Search Email or Name" value="<?php echo htmlspecialchars($searchTerm); ?>">
+                    <input type="text" name="search" placeholder="Search Email or Name or Seller" value="<?php echo htmlspecialchars($searchTerm); ?>">
                     <input type="date" name="start_date" value="<?php echo htmlspecialchars($startDate); ?>" placeholder="Start Date">
                     <input type="date" name="end_date" value="<?php echo htmlspecialchars($endDate); ?>" placeholder="End Date">
                     <button type="submit">Search</button>
@@ -140,7 +128,11 @@ $signups = $stmt->fetchAll();
                         <th><a href="<?php echo htmlspecialchars(getSignupListURL('Email', $sortColumn, $sortOrder)); ?>">Email</a></th>
                         <th>Name</th>
                         <th><a href="<?php echo htmlspecialchars(getSignupListURL('SoldBy', $sortColumn, $sortOrder)); ?>">SoldBy</a></th>
-                        <th><a href="<?php echo htmlspecialchars(getSignupListURL('OrderDateFM', $sortColumn, $sortOrder)); ?>">Order Date</a></th>
+                        <th>
+                            Order Date
+                            <a href="<?php echo htmlspecialchars(getSignupListURL('OrderDateRaw', 'ASC')); ?>"><img src="up.png" style="width: 15px; height: 15px;"></a>
+                            <a href="<?php echo htmlspecialchars(getSignupListURL('OrderDateRaw', 'DESC')); ?>"><img src="down.png" style="width: 15px; height: 15px;"></a>
+                        </th>
                         <th>History</th>
                     </tr>
                 </thead>
@@ -150,7 +142,7 @@ $signups = $stmt->fetchAll();
                             <td><?php echo htmlspecialchars($signup['Email']); ?></td>
                             <td><?php echo htmlspecialchars($signup['Name']); ?></td>
                             <td><?php echo htmlspecialchars($signup['SoldBy']); ?></td>
-                            <td><?php echo htmlspecialchars($signup['OrderDateFM']); ?></td>
+                            <td class="order-date" data-raw-date="<?php echo htmlspecialchars($signup['OrderDateRaw']); ?>">--</td>
                             <td><a href="user_history.php?email=<?php echo urlencode($signup['Email']); ?>">View History</a></td>
                         </tr>
                     <?php endforeach; ?>
@@ -160,17 +152,16 @@ $signups = $stmt->fetchAll();
             <!-- Pagination Links -->
             <div class="pagination">
                 <?php if ($page > 1): ?>
-                <a href="?page=<?php echo ($page - 1); ?>&search=<?php echo urlencode($searchTerm); ?>">Previous</a>
+                    <a href="?page=<?php echo ($page - 1); ?>&search=<?php echo urlencode($searchTerm); ?>">Previous</a>
                 <?php endif; ?>
                 <?php if (count($signups) === $limit): ?>
-                <a href="?page=<?php echo ($page + 1); ?>&search=<?php echo urlencode($searchTerm); ?>">Next</a>
+                    <a href="?page=<?php echo ($page + 1); ?>&search=<?php echo urlencode($searchTerm); ?>">Next</a>
                 <?php endif; ?>
             </div>  
             
-            <!-- Back to Dashboard -->
-            <a href="index.php<?php echo empty($searchTerm) ? '' : '?search=' . urlencode($searchTerm); ?>">Back to Dashboard</a>
         </main>
     </div>
 
+    <script src="script.js"></script>
 </body>
 </html>

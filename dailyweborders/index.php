@@ -2,22 +2,17 @@
 include 'db_connect.php';
 include 'functions.php';
 
-// Search term from query string
-$searchTerm = getSearchTerm();
-
 // Get total signup count
-$sql = 'SELECT COUNT(DISTINCT Email) FROM dailyweborders';
-if (!empty($searchTerm)) {
-    $sql .= " WHERE Email LIKE ?";
-}
-$stmt = $pdo->prepare($sql);
-if (!empty($searchTerm)) {
-    $stmt->execute(["%" . $searchTerm . "%"]);
-} else {
-    $stmt->execute();
-}
-
+$tsql = 'SELECT COUNT(DISTINCT Email) FROM dailyweborders';
+$stmt = $pdo->prepare($tsql);
+$stmt->execute();
 $totalSignups = $stmt->fetchColumn();
+
+// Get total orders count per year
+$orderYearSql = 'SELECT DISTINCT YEAR(OrderDate) AS order_year, COUNT(DISTINCT Email) AS order_count FROM dailyweborders GROUP BY YEAR(OrderDate)';
+$stmt = $pdo->prepare($orderYearSql);
+$stmt->execute();
+$ordersByYear = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -27,6 +22,21 @@ $totalSignups = $stmt->fetchColumn();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="dashboard.css">
+    <style>
+        .card table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .card th, .card td {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        .card th {
+            background-color: #f4f4f4;
+        }
+    </style>
 </head>
 <body>
     <div class="dashboard-container">
@@ -57,27 +67,26 @@ $totalSignups = $stmt->fetchColumn();
                     <h3>Total Signups</h3>
                     <p><?php echo $totalSignups; ?></p>
                 </div>
-                <!-- <div class="card">
-                    <h3>Total Revenue</h3>
-                    <p></p> 
-                </div>
                 <div class="card">
-                    <h3>Total Orders</h3>
-                    <p>279</p> 
+                    <h3>Orders By Year</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Year</th>
+                                <th>Order Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($ordersByYear as $data): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($data['order_year']); ?></td>
+                                    <td><?php echo htmlspecialchars($data['order_count']); ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
                 </div>
-                <div class="card">
-                    <h3>Total Customers</h3>
-                    <p>65</p> 
-                </div> -->
             </section>
-<!-- 
-            <section class="orders-summary">
-                <h2>Orders Summary</h2>
-            </section>
-
-            <section class="revenue-section">
-                <h2>Revenue Overview</h2>
-            </section> -->
         </main>
     </div>
 </body>

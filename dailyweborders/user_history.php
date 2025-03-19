@@ -1,22 +1,20 @@
 <?php
-// Assuming you have a database connection established in a separate file (e.g., db_connect.php)
-require_once 'db_connect.php'; // Adjust path as needed
+require_once 'db_connect.php'; 
 include 'functions.php';
 
-// Get the email from the GET request (or however you're passing it)
-$email = $_GET['email'] ?? ''; // Use a default if email is not provided
+$email = $_GET['email'] ?? ''; 
 
 $sortColumn = getSortColumn();
 $sortOrder = getSortOrder();
 
-// *** Signups Query ***
 $signupQuery = "SELECT Name, Email, 
             CASE 
             WHEN STR_TO_DATE(OrderDate, '%Y%m%d') IS NOT NULL THEN STR_TO_DATE(OrderDate, '%Y%m%d')
             WHEN STR_TO_DATE(OrderDate, '%m/%d/%Y') IS NOT NULL THEN STR_TO_DATE(OrderDate, '%m/%d/%Y')
             ELSE NULL
         END AS OrderDateFM, 
-SoldBy FROM dailyweborders WHERE Email = ? LIMIT 10";
+SoldBy FROM dailyweborders WHERE Email = ?";
+
 $signupStmt = $pdo->prepare($signupQuery);
 $signupStmt->execute([$email]);
 $signups = $signupStmt->fetchAll();

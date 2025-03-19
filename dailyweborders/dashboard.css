@@ -112,8 +112,8 @@ body {
 
 /* Summary Cards */
 .summary-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    display: flex;
+    grid-template-rows: repeat(auto-fit, minmax(200px, 1fr));
     gap: 20px; /* Space between cards */
 }
 

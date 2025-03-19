@@ -1,7 +1,7 @@
 <?php
 
 $host = 'localhost';
-$dbname = 'dailyweborders';
+$dbname = 'pc_2025';
 $user = 'root';
 $password = '';
 
