@@ -1,4 +1,4 @@
-/* General Styles */
+
 body {
     font-family: 'Arial', sans-serif;
     margin: 0;
@@ -50,7 +50,7 @@ body {
 
 /* Main Content */
 .main-content {
-    margin-left: 250px; /* Matches sidebar width */
+    margin-left: 250px; 
     padding: 20px;
 }
 
@@ -119,43 +119,44 @@ body {
 
 .card {
     background-color: #fff;
-    border-radius: 8px; /* Rounded corners */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    border-radius: 8px; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
     padding: 20px; /* Inner spacing */
 }
 
 .card h3 {
-    font-size: 18px; /* Title size */
+    font-size: 18px;
 }
 
 .card p {
-    font-size: 24px; /* Metric size */
+    font-size: 24px; 
 }
 
 /* Orders Summary Section */
 .orders-summary,
 .revenue-section {
-    margin-top: 40px; /* Space between sections */
+    margin-top: 40px;
 }
 
 .orders-summary h2,
 .revenue-section h2 {
-    font-size: 22px; /* Section title size */
+    font-size: 22px; 
 }
 
-/* Revenue Section (Placeholder for Charts) */
+/* Revenue Section */
 .revenue-section .chart-placeholder {
-    height: 300px; /* Placeholder height for charts */
-    background-color: #e9ecef; /* Light gray background for placeholder */
+    height: 300px;
+    background-color: #e9ecef; 
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
     .sidebar {
-        width: 200px; /* Adjust for smaller screens */
-        font-size: 14px; /* Reduce font size for sidebar links */
-        position: fixed; /* Keep sidebar fixed on smaller screens */
-        z-index: 1000; /* Ensure sidebar stays on top of content */
-        overflow-y: auto; /* Add scrolling for long menus */
+        width: 200px; 
+        font-size: 14px; 
+        position: fixed; 
+        z-index: 1000; 
+        overflow-y: auto; 
 }
 }
+

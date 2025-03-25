@@ -140,7 +140,7 @@ $topSizes = $topSizeStmt->fetchAll(PDO::FETCH_COLUMN);
                 </select>
                 <label for="updateDateStarted">Date Started:</label>
                 <input type="date" id="updateDateStarted" name="date_started" required>
-                <button type="submit">Update</button>
+                <!-- <button type="submit">Update</button> -->
             </form>
         </div>
     </div>

@@ -1,30 +1,31 @@
 <?php
+// Include the database connection and helper functions
 require_once 'db_connect.php'; 
 include 'functions.php';
 
+// Get the email parameter from the URL query string
 $email = $_GET['email'] ?? ''; 
 
+// Get sort column and order
 $sortColumn = getSortColumn();
 $sortOrder = getSortOrder();
 
-// -----------------
-// Pagination Setup for Signup History
-// -----------------
+// Set up pagination for the signup history
+// Display 6 records per page
 $signupPage = isset($_GET['signupPage']) ? (int)$_GET['signupPage'] : 1;
-$signupPerPage = 6;  // number of records per page
+$signupPerPage = 6;  //CAN BE CHANGED TO DESIRED NUMBER
 $signupOffset = ($signupPage - 1) * $signupPerPage;
 
-// Signup query with pagination
-$signupQuery = "SELECT Name, Email, 
-    CASE 
-        WHEN STR_TO_DATE(OrderDate, '%Y%m%d') IS NOT NULL THEN STR_TO_DATE(OrderDate, '%Y%m%d')
-        WHEN STR_TO_DATE(OrderDate, '%m/%d/%Y') IS NOT NULL THEN STR_TO_DATE(OrderDate, '%m/%d/%Y')
-        ELSE NULL
-    END AS OrderDateFM, 
-SoldBy 
-FROM dailyweborders 
-WHERE Email = :email 
-LIMIT :offset, :limit";
+// Build the query for signup history for the given email
+$signupQuery = "
+    SELECT 
+        Name, 
+        Email, 
+        OrderDate AS OrderDateRaw, 
+        SoldBy 
+    FROM dailyweborders 
+    WHERE Email = :email 
+    LIMIT :offset, :limit";
 $signupStmt = $pdo->prepare($signupQuery);
 $signupStmt->bindValue(':email', $email);
 $signupStmt->bindValue(':offset', $signupOffset, PDO::PARAM_INT);
@@ -32,25 +33,21 @@ $signupStmt->bindValue(':limit', $signupPerPage, PDO::PARAM_INT);
 $signupStmt->execute();
 $signups = $signupStmt->fetchAll();
 
-// -----------------
-// Pagination Setup for Completed Orders
-// -----------------
+// Set up pagination for the completed orders section
+// Again, 6 records per page
 $completedPage = isset($_GET['completedPage']) ? (int)$_GET['completedPage'] : 1;
-$completedPerPage = 6; // adjust as needed
+$completedPerPage = 6; //CAN BE CHANGED TO DESIRED NUMBER
 $completedOffset = ($completedPage - 1) * $completedPerPage;
 
-// Completed orders query with pagination
+// Build the query for completed orders for the given email
+// Only orders with complete details are considered "completed"
 $completedOrdersQuery = "
     SELECT 
         Name, 
         Email,
         Price AS order_amount, 
         SoldBy, 
-        CASE 
-            WHEN STR_TO_DATE(OrderDate, '%Y%m%d') IS NOT NULL THEN STR_TO_DATE(OrderDate, '%Y%m%d')
-            WHEN STR_TO_DATE(OrderDate, '%m/%d/%Y') IS NOT NULL THEN STR_TO_DATE(OrderDate, '%m/%d/%Y')
-            ELSE NULL
-        END AS OrderDateFM,
+        OrderDate AS OrderDateRaw,
         Country,
         Address,
         City,
@@ -76,6 +73,7 @@ $completedOrdersStmt->bindValue(':limit', $completedPerPage, PDO::PARAM_INT);
 $completedOrdersStmt->execute();
 $completedOrders = $completedOrdersStmt->fetchAll();
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -108,21 +106,18 @@ $completedOrders = $completedOrdersStmt->fetchAll();
 </head>
 <body>
 <div class="dashboard-container">
-    <!-- Sidebar -->
     <aside class="sidebar">
         <div class="sidebar-header">
             <h2>Admin Panel</h2>
         </div>
         <ul class="sidebar-menu">
             <li><a href="index.php">Dashboard</a></li>
-            <li><a href="#">Orders</a></li>
+            <li><a href="order_list.php">Orders</a></li>
             <li><a href="signup_list.php">Customers</a></li>
-            <li><a href="#">Reports</a></li>
-            <li><a href="#">Settings</a></li>
         </ul>
     </aside>
 
-    <!-- Main Content -->
+    <!-- SIGNUP HISTORY Section -->
     <main class="main-content">
         <h2>Signup History</h2>
         <table>
@@ -140,7 +135,11 @@ $completedOrders = $completedOrdersStmt->fetchAll();
                         <tr>
                             <td><?php echo htmlspecialchars($signup['Name']); ?></td>
                             <td><?php echo htmlspecialchars($signup['Email']); ?></td>
-                            <td><?php echo htmlspecialchars($signup['OrderDateFM']); ?></td>
+                            <?php 
+                                // Parse and format the order date.
+                                $dateObj = parseOrderDate($signup['OrderDateRaw']); 
+                            ?>
+                            <td><?php echo htmlspecialchars(formatDate($dateObj)); ?></td>
                             <td><?php echo htmlspecialchars($signup['SoldBy']); ?></td>
                         </tr>
                     <?php endforeach; ?>
@@ -151,7 +150,8 @@ $completedOrders = $completedOrdersStmt->fetchAll();
                 <?php endif; ?>
             </tbody>
         </table>
-        <!-- Pagination for Signup History -->
+
+        <!-- Pagination -->
         <div class="pagination">
             <?php if ($signupPage > 1): ?>
                 <a href="?email=<?php echo urlencode($email); ?>&signupPage=<?php echo ($signupPage - 1); ?>">Previous</a>
@@ -161,6 +161,7 @@ $completedOrders = $completedOrdersStmt->fetchAll();
             <?php endif; ?>
         </div>
 
+        <!-- Completed Orders Section -->
         <h2>Completed Orders</h2>
         <table>
             <thead>
@@ -187,7 +188,11 @@ $completedOrders = $completedOrdersStmt->fetchAll();
                             <td><?php echo htmlspecialchars($order['Email']); ?></td>
                             <td><?php echo htmlspecialchars($order['order_amount']); ?></td>
                             <td><?php echo htmlspecialchars($order['SoldBy']); ?></td>
-                            <td><?php echo htmlspecialchars($order['OrderDateFM']); ?></td>
+                            <?php 
+                                // Parse and format the order date
+                                $orderDateObj = parseOrderDate($order['OrderDateRaw']); 
+                            ?>
+                            <td><?php echo htmlspecialchars(formatDate($orderDateObj)); ?></td>
                             <td><?php echo htmlspecialchars($order['Country']); ?></td>
                             <td><?php echo htmlspecialchars($order['Address']); ?></td>
                             <td><?php echo htmlspecialchars($order['City']); ?></td>
@@ -198,6 +203,7 @@ $completedOrders = $completedOrdersStmt->fetchAll();
                         </tr>
                     <?php endforeach; ?>
                 <?php else: ?>
+                    <!-- Display message if no completed orders are found -->
                     <tr>
                         <td colspan="12">No completed orders found for this email.</td>
                     </tr>

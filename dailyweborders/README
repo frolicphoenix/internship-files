@@ -1,0 +1,24 @@
+- **db_connect.php**  
+  Contains the PDO-based database connection. Credentials are set up as needed.
+
+- **functions.php**  
+  Houses helper functions for parameter handling, date parsing/formatting, and URL generation. These functions streamline common tasks across the project.
+
+- **index.php**  
+  The main dashboard page that displays overall signups, yearly breakdowns, and renders monthly/weekly charts via Chart.js.
+
+- **date-master.php**  (just for debugging)
+  A utility page for verifying date formats from the database. Useful for debugging date-related issues.
+
+- **monthly_data.php & weekly_data.php**  
+  Provide JSON endpoints for chart data. They aggregate signup counts by month and week, respectively.
+
+- **order_list.php**  
+  Lists orders with search, filter, sort, and pagination capabilities.
+
+- **signup_list.php**  
+  Displays customer signups with options for searching, filtering by date, sorting, and pagination.
+
+- **user_history.php**  
+  Offers detailed views of individual user history, split into signup records and completed orders, with separate pagination for each.
+
